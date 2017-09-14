@@ -1,0 +1,46 @@
+service: stonf
+
+custom:
+  webpackIncludeModules: true
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  iamRoleStatements:
+    - Effect: Allow
+      Resource:
+        Fn::Join:
+          - ""
+          - - "arn:aws:s3:::"
+            - Ref: S3BucketData
+            - "/data"
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+  environment:
+    TOKEN_SIGN_SECRET: ${env:TOKEN_SIGN_SECRET, file(./config.js):random}
+    S3_BUCKET_DATA_NAME:
+      Ref: S3BucketData
+
+plugins:
+  - serverless-webpack
+
+functions:
+  graphql:
+    handler: handler.graphql
+    events:
+      - http: POST /graphql
+      - http: GET /graphql
+
+  graphiql:
+    handler: handler.graphiql
+    events:
+      - http: GET /graphiql
+
+  fixtures:
+    handler: handler.fixtures
+
+resources:
+  Resources:
+    S3BucketData:
+      Type: AWS::S3::Bucket

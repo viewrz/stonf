@@ -1,0 +1,32 @@
+scalar JSON
+
+type User {
+  username: String!
+}
+
+type Conf {
+  _id: ID!
+  name: String!
+  vars: JSON!
+}
+
+type Query {
+  users: [User!]!
+  confs: [Conf!]!
+  confById(_id: ID!): Conf!
+}
+
+type LoginResult {
+  token: String!
+}
+
+type Mutation {
+  login(username: String!, password: String!): LoginResult!
+  createConf(name: String!, vars: JSON!): Conf!
+  updateConf(_id: ID!, name: String!, vars: JSON!): Conf!
+  cloneConf(_id: ID!): Conf!
+  deleteConf(_id: ID!): Conf!
+  createUser(username: String!, password: String!): User!
+  changePassword(newPassword: String!): LoginResult!
+  deleteUser(username: String!): User!
+}
